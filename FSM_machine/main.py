@@ -4,10 +4,9 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup, default_state
-from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import (CallbackQuery, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message, PhotoSize)
-from environs import Env
+from config import Config, load_config
 
 # Конфигурируем логирование
 logging.basicConfig(
@@ -19,17 +18,11 @@ logging.basicConfig(
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
 
-
-# Инициализируем хранилище (создаем экземпляр класса MemoryStorage)
-storage = MemoryStorage()
-
-env = Env()
-env.read_env()
-
-API_TOKEN = env('BOT_TOKEN')
+config: Config = load_config()
+API_TOKEN: str =  config.tg_bot.token
 
 bot: Bot = Bot(API_TOKEN)
-dp: Dispatcher = Dispatcher(storage=storage)
+dp: Dispatcher = Dispatcher()
 
 # Создаем "базу данных" пользователей
 user_dict: dict[int, dict[str, str | int | bool]] = {}
